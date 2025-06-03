@@ -37,12 +37,15 @@ RUN touch suma/__init__.py suma/app/__init__.py \
     ecuacion/__init__.py ecuacion/app/__init__.py \
     almacenar/__init__.py almacenar/app/__init__.py
 
+# Add the current directory to PYTHONPATH
+ENV PYTHONPATH=/app
+
 # Create a single entry point script
 RUN echo '#!/bin/bash\n\
-cd /app && uvicorn suma.app.main:app --host 0.0.0.0 --port 8001 &\n\
-cd /app && uvicorn resta.app.main:app --host 0.0.0.0 --port 8002 &\n\
-cd /app && uvicorn ecuacion.app.main:app --host 0.0.0.0 --port 8003 &\n\
-cd /app && uvicorn almacenar.app.main:app --host 0.0.0.0 --port 8004 &\n\
+cd /app && python -m uvicorn suma.app.main:app --host 0.0.0.0 --port 8001 &\n\
+cd /app && python -m uvicorn resta.app.main:app --host 0.0.0.0 --port 8002 &\n\
+cd /app && python -m uvicorn ecuacion.app.main:app --host 0.0.0.0 --port 8003 &\n\
+cd /app && python -m uvicorn almacenar.app.main:app --host 0.0.0.0 --port 8004 &\n\
 wait' > /app/start.sh && \
 chmod +x /app/start.sh
 
