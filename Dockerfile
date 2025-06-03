@@ -67,11 +67,20 @@ async def health():\n\
 
 # Create a single entry point script
 RUN echo '#!/bin/bash\n\
+\n\
+# Start the proxy first\n\
 cd /app && python -m uvicorn proxy:app --host 0.0.0.0 --port 8000 &\n\
+\n\
+# Wait for the proxy to start\n\
+sleep 5\n\
+\n\
+# Start the other services\n\
 cd /app && python -m uvicorn suma.app.main:app --host 0.0.0.0 --port 8001 &\n\
 cd /app && python -m uvicorn resta.app.main:app --host 0.0.0.0 --port 8002 &\n\
 cd /app && python -m uvicorn ecuacion.app.main:app --host 0.0.0.0 --port 8003 &\n\
 cd /app && python -m uvicorn almacenar.app.main:app --host 0.0.0.0 --port 8004 &\n\
+\n\
+# Keep the container running\n\
 wait' > /app/start.sh && \
 chmod +x /app/start.sh
 

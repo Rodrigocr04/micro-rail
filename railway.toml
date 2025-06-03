@@ -6,13 +6,13 @@ dockerfilePath = "Dockerfile"
 
 [deploy]
 startCommand = "/app/start.sh"
-healthcheckPath = "/docs"
-healthcheckTimeout = 100
+healthcheckPath = "/health"
+healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
 [deploy.env]
-PORT = "8001"
+PORT = "8000"
 SUMA_URL = "http://localhost:8001"
 RESTA_URL = "http://localhost:8002"
 ECUACION_URL = "http://localhost:8003"
