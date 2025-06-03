@@ -22,7 +22,10 @@ RUN pip install --no-cache-dir \
     -r suma/requirements.txt \
     -r resta/requirements.txt \
     -r ecuacion/requirements.txt \
-    -r almacenar/requirements.txt
+    -r almacenar/requirements.txt \
+    fastapi \
+    uvicorn \
+    python-multipart
 
 # Copy application code
 COPY suma/app/ ./suma/app/
@@ -40,8 +43,31 @@ RUN touch suma/__init__.py suma/app/__init__.py \
 # Add the current directory to PYTHONPATH
 ENV PYTHONPATH=/app
 
+# Create a proxy service that will handle the main port
+RUN echo 'from fastapi import FastAPI\n\
+from fastapi.middleware.cors import CORSMiddleware\n\
+\n\
+app = FastAPI()\n\
+\n\
+app.add_middleware(\n\
+    CORSMiddleware,\n\
+    allow_origins=["*"],\n\
+    allow_credentials=True,\n\
+    allow_methods=["*"],\n\
+    allow_headers=["*"],\n\
+)\n\
+\n\
+@app.get("/")\n\
+async def root():\n\
+    return {"message": "API Gateway is running"}\n\
+\n\
+@app.get("/health")\n\
+async def health():\n\
+    return {"status": "healthy"}' > /app/proxy.py
+
 # Create a single entry point script
 RUN echo '#!/bin/bash\n\
+cd /app && python -m uvicorn proxy:app --host 0.0.0.0 --port 8000 &\n\
 cd /app && python -m uvicorn suma.app.main:app --host 0.0.0.0 --port 8001 &\n\
 cd /app && python -m uvicorn resta.app.main:app --host 0.0.0.0 --port 8002 &\n\
 cd /app && python -m uvicorn ecuacion.app.main:app --host 0.0.0.0 --port 8003 &\n\
@@ -50,7 +76,7 @@ wait' > /app/start.sh && \
 chmod +x /app/start.sh
 
 # Expose all ports
-EXPOSE 8001 8002 8003 8004
+EXPOSE 8000 8001 8002 8003 8004
 
 # Start all services
 CMD ["/app/start.sh"] 
