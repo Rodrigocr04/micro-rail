@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException # FastAPI framework and exception han
 from pydantic import BaseModel # For data validation
 import mysql.connector # To connect to the MySQL database
 import os # To access environment variables
+import time
 
 # Create a FastAPI application instance
 app = FastAPI()
@@ -59,3 +60,11 @@ def store_result(data: ResultInput):
             cursor.close()
         if db and db.is_connected():
             db.close()
+
+@app.get("/health")
+async def health():
+    return {
+        "status": "healthy",
+        "service": "almacenar",
+        "timestamp": time.time()
+    }

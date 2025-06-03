@@ -8,6 +8,8 @@ from pydantic import BaseModel # For data validation
 import requests # To make HTTP requests to other services
 import mysql.connector # To connect to the MySQL database
 import os # To access environment variables
+import math
+import time
 
 # Create a FastAPI application instance
 app = FastAPI()
@@ -125,3 +127,11 @@ def historial():
             cursor.close()
         if db and db.is_connected():
             db.close()
+
+@app.get("/health")
+async def health():
+    return {
+        "status": "healthy",
+        "service": "ecuacion",
+        "timestamp": time.time()
+    }

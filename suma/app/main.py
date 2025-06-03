@@ -4,6 +4,7 @@
 # Import necessary libraries
 from fastapi import FastAPI # FastAPI framework
 from pydantic import BaseModel # For data validation
+import time
 
 # Create a FastAPI application instance
 app = FastAPI()
@@ -24,3 +25,11 @@ def sumar(valores: Input):
     resultado = valores.a + valores.b
     # Return the result as a JSON object
     return {"resultado": resultado}
+
+@app.get("/health")
+async def health():
+    return {
+        "status": "healthy",
+        "service": "suma",
+        "timestamp": time.time()
+    }
