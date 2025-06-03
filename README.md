@@ -10,45 +10,94 @@ Este proyecto consiste en una aplicación de microservicios desplegada en Railwa
 - **almacenar**: Servicio para almacenar resultados en MySQL
 - **mysql**: Base de datos MySQL
 
-## Despliegue en Railway
+## Despliegue de Aplicación en Railway
 
-1. **Crear una cuenta en Railway**
-   - Visita [Railway.app](https://railway.app)
-   - Regístrate con tu cuenta de GitHub
+## Pasos para Desplegar la Aplicación en la Nube
 
-2. **Crear un nuevo proyecto**
-   - Haz clic en "New Project"
+1. **Preparación del Código**
+   - Asegúrate de que todos los archivos estén en el repositorio Git
+   - Verifica que el `Dockerfile` y `railway.toml` estén correctamente configurados
+   - Confirma que todos los servicios tengan sus endpoints de salud implementados
+
+2. **Configuración en Railway**
+   - Ve a [Railway.app](https://railway.app/)
+   - Inicia sesión con tu cuenta de GitHub
+   - Crea un nuevo proyecto
    - Selecciona "Deploy from GitHub repo"
-   - Selecciona este repositorio
+   - Conecta tu repositorio de GitHub
 
-3. **Configurar variables de entorno**
-   En Railway, ve a la sección "Variables" y configura las siguientes variables:
-
-   ```env
-   # Database Configuration
-   MYSQL_HOST=railway-mysql
-   MYSQL_USER=railway
-   MYSQL_PASSWORD=railway
-   MYSQL_DATABASE=resultados_db
-   MYSQL_PORT=3306
-
-   # Service URLs
-   SUMA_URL=http://suma:8000
-   RESTA_URL=http://resta:8000
-   ECUACION_URL=http://ecuacion:8000
-   ALMACENAR_URL=http://almacenar:8000
-
-   # Service Ports
-   SUMA_PORT=8000
-   RESTA_PORT=8000
-   ECUACION_PORT=8000
-   ALMACENAR_PORT=8000
+3. **Configuración de Variables de Entorno**
+   En Railway, configura las siguientes variables de entorno:
+   ```
+   MYSQL_HOST=tu-host-mysql
+   MYSQL_USER=tu-usuario
+   MYSQL_PASSWORD=tu-contraseña
+   MYSQL_DATABASE=tu-base-de-datos
+   PORT=8000
+   SUMA_URL=http://localhost:8001
+   RESTA_URL=http://localhost:8002
+   ECUACION_URL=http://localhost:8003
+   ALMACENAR_URL=http://localhost:8004
    ```
 
-4. **Desplegar la aplicación**
-   - Railway detectará automáticamente el archivo `railway.toml`
-   - Iniciará el despliegue de los servicios
-   - Puedes monitorear el progreso en la sección "Deployments"
+4. **Configuración de la Base de Datos**
+   - En Railway, agrega un servicio de MySQL
+   - Railway te proporcionará automáticamente las credenciales
+   - Actualiza las variables de entorno con las credenciales proporcionadas
+
+5. **Despliegue**
+   - Railway detectará automáticamente el `Dockerfile`
+   - Iniciará el proceso de construcción de la imagen
+   - Desplegará el contenedor
+   - Configurará el health check
+
+6. **Verificación del Despliegue**
+   - Monitorea los logs en Railway para verificar que:
+     - Todos los servicios inicien correctamente
+     - Los health checks pasen
+     - No haya errores en la conexión a la base de datos
+   - Verifica que la aplicación esté accesible en la URL proporcionada por Railway
+
+7. **Pruebas Post-Despliegue**
+   - Prueba el endpoint principal: `https://tu-app.railway.app/`
+   - Verifica el health check: `https://tu-app.railway.app/health`
+   - Prueba cada microservicio:
+     - Suma: `https://tu-app.railway.app/suma`
+     - Resta: `https://tu-app.railway.app/resta`
+     - Ecuación: `https://tu-app.railway.app/ecuacion`
+     - Almacenar: `https://tu-app.railway.app/almacenar`
+
+8. **Monitoreo Continuo**
+   - Configura alertas en Railway para:
+     - Fallos en el health check
+     - Errores en los servicios
+     - Problemas de conexión con la base de datos
+   - Monitorea el uso de recursos
+   - Revisa los logs periódicamente
+
+9. **Mantenimiento**
+   - Realiza backups regulares de la base de datos
+   - Monitorea el uso de recursos
+   - Actualiza las dependencias cuando sea necesario
+   - Revisa los logs para detectar problemas potenciales
+
+10. **Escalabilidad**
+    - Railway manejará automáticamente el escalado
+    - Monitorea el rendimiento
+    - Ajusta los recursos según sea necesario
+
+## Características del Dashboard de Railway
+
+Railway proporciona un dashboard donde puedes:
+- Ver los logs en tiempo real
+- Monitorear el rendimiento
+- Configurar variables de entorno
+- Gestionar la base de datos
+- Ver el estado de los servicios
+
+## Soporte
+
+Si necesitas más detalles sobre algún paso específico o tienes problemas durante el despliegue, por favor crea un issue en el repositorio.
 
 ## Pruebas
 
