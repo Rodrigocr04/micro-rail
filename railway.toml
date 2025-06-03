@@ -7,7 +7,7 @@ dockerfilePath = "Dockerfile"
 [deploy]
 startCommand = "/app/start.sh"
 healthcheckPath = "/health"
-healthcheckTimeout = 30
+healthcheckTimeout = 60
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
@@ -18,32 +18,8 @@ RESTA_URL = "http://localhost:8002"
 ECUACION_URL = "http://localhost:8003"
 ALMACENAR_URL = "http://localhost:8004"
 
-[[service]]
-name = "suma"
-buildCommand = "docker build -t suma:latest ./suma"
-startCommand = "uvicorn suma:app --host 0.0.0.0 --port 8000"
-
-[[service]]
-name = "resta"
-buildCommand = "docker build -t resta:latest ./resta"
-startCommand = "uvicorn resta:app --host 0.0.0.0 --port 8000"
-
-[[service]]
-name = "ecuacion"
-buildCommand = "docker build -t ecuacion:latest ./ecuacion"
-startCommand = "uvicorn multiplica:app --host 0.0.0.0 --port 8000"
-
-[[service]]
-name = "almacenar"
-buildCommand = "docker build -t almacenar:latest ./almacenar"
-startCommand = "uvicorn almacenar:app --host 0.0.0.0 --port 8000"
-
-[[service]]
-name = "mysql"
-# For the mysql service, we typically use a pre-built image
-# Railway might handle this differently or require a custom Dockerfile if initialization is complex
-# Let's omit build/start commands for mysql for now and see how Railway handles the service definition
-# You might need to add a MySQL service directly through the Railway UI or use a template
+# Remove individual service definitions since we're using a single container
+# with multiple services managed by the start.sh script
 
 [common.deploy.env]
 PORT = "8000" 

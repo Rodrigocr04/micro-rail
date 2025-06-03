@@ -46,6 +46,7 @@ ENV PYTHONPATH=/app
 # Create a proxy service that will handle the main port
 RUN echo 'from fastapi import FastAPI\n\
 from fastapi.middleware.cors import CORSMiddleware\n\
+import time\n\
 \n\
 app = FastAPI()\n\
 \n\
@@ -57,13 +58,18 @@ app.add_middleware(\n\
     allow_headers=["*"],\n\
 )\n\
 \n\
+@app.on_event("startup")\n\
+async def startup_event():\n\
+    # Give other services time to start\n\
+    time.sleep(5)\n\
+\n\
 @app.get("/")\n\
 async def root():\n\
     return {"message": "API Gateway is running"}\n\
 \n\
 @app.get("/health")\n\
 async def health():\n\
-    return {"status": "healthy"}' > /app/proxy.py
+    return {"status": "healthy", "timestamp": time.time()}' > /app/proxy.py
 
 # Create a single entry point script
 RUN echo '#!/bin/bash\n\
