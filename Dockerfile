@@ -1,4 +1,4 @@
-FROM docker/compose:latest
+FROM docker/compose:1.29.2
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY almacenar/ ./almacenar/
 COPY mysql/ ./mysql/
 
 # Set environment variables
-ENV DOCKER_COMPOSE_VERSION=latest
+ENV DOCKER_COMPOSE_VERSION=1.29.2
 
 # Verify the installation
 RUN docker-compose --version
