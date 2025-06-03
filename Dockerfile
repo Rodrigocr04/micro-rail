@@ -2,11 +2,24 @@ FROM docker/compose:latest
 
 WORKDIR /app
 
+# Copy only the necessary files first
 COPY docker-compose.yaml .
-COPY suma ./suma
-COPY resta ./resta
-COPY ecuacion ./ecuacion
-COPY almacenar ./almacenar
-COPY mysql ./mysql
 
-CMD ["docker-compose", "up"] 
+# Create directories
+RUN mkdir -p suma resta ecuacion almacenar mysql
+
+# Copy service files
+COPY suma/ ./suma/
+COPY resta/ ./resta/
+COPY ecuacion/ ./ecuacion/
+COPY almacenar/ ./almacenar/
+COPY mysql/ ./mysql/
+
+# Set environment variables
+ENV DOCKER_COMPOSE_VERSION=latest
+
+# Verify the installation
+RUN docker-compose --version
+
+# Start the services
+CMD ["docker-compose", "up", "--build"] 

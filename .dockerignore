@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+*.pyc
+__pycache__
+.pytest_cache
+.coverage
+htmlcov
+.DS_Store
+node_modules
+*.log
+railway.env
+README.md 
