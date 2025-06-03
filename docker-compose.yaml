@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  suma:
+    build: ./suma
+    ports:
+      - "${SUMA_PORT:-8001}:8000"
+    environment:
+      - PORT=8000
+    networks:
+      - shape-net
+
+  resta:
+    build: ./resta
+    ports:
+      - "${RESTA_PORT:-8002}:8000"
+    environment:
+      - PORT=8000
+    networks:
+      - shape-net
+
+  ecuacion:
+    build: ./ecuacion
+    ports:
+      - "${ECUACION_PORT:-8003}:8000"
+    environment:
+      - PORT=8000
+      - SUMA_URL=${SUMA_URL:-http://suma:8000}
+      - RESTA_URL=${RESTA_URL:-http://resta:8000}
+      - ALMACENAR_URL=${ALMACENAR_URL:-http://almacenar:8000}
+    networks:
+      - shape-net
+    depends_on:
+      - suma
+      - resta
+      - almacenar
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword123}
+      MYSQL_HOST: ${MYSQL_HOST:-mysql}
+      MYSQL_USER: ${MYSQL_USER:-myuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-mypassword123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-resultados_db}
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    networks:
+      - shape-net
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+
+  almacenar:
+    build: ./almacenar
+    ports:
+      - "${ALMACENAR_PORT:-8004}:8000"
+    environment:
+      - PORT=8000
+      - MYSQL_HOST=${MYSQL_HOST:-mysql}
+      - MYSQL_USER=${MYSQL_USER:-myuser}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-mypassword123}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-resultados_db}
+    networks:
+      - shape-net
+    depends_on:
+      - mysql
+
+networks:
+  shape-net:
+    driver: bridge
+
+volumes:
+  mysql_data:  
